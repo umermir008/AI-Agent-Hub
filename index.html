@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Hub | Enterprise Automation Platform</title>
+    <meta name="description" content="Build, manage, and scale AI agents with an enterprise-grade interface.">
+    
+    <!-- Fonts: Inter (Variable) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons: Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* -------------------------------------------------------------------------- */
+        /* VARIABLES                                  */
+        /* -------------------------------------------------------------------------- */
+        :root {
+            /* Light Mode (Default) */
+            --bg-page: #F9FAFB;
+            --bg-surface: #FFFFFF;
+            --bg-surface-secondary: #F3F4F6;
+            --bg-glass: rgba(255, 255, 255, 0.8);
+            
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-tertiary: #94A3B8;
+            
+            --brand-primary: #2563EB; /* Deep Blue refined */
+            --brand-primary-hover: #1D4ED8;
+            --brand-accent: #059669; /* Emerald */
+            
+            --border-light: #E2E8F0;
+            --border-hover: #CBD5E1;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+
+            --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-page: #0F172A;
+            --bg-surface: #1E293B;
+            --bg-surface-secondary: #334155;
+            --bg-glass: rgba(15, 23, 42, 0.8);
+            
+            --text-primary: #F8FAFC;
+            --text-secondary: #CBD5E1;
+            --text-tertiary: #64748B;
+            
+            --brand-primary: #3B82F6;
+            --brand-primary-hover: #60A5FA;
+            --brand-accent: #10B981;
+            
+            --border-light: #334155;
+            --border-hover: #475569;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* RESET                                    */
+        /* -------------------------------------------------------------------------- */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            transition: background-color 0.4s var(--ease-apple), color 0.4s var(--ease-apple);
+        }
+
+        /* Typography enhancements */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--text-primary);
+        }
+        
+        p {
+            color: var(--text-secondary);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* UTILITIES                                  */
+        /* -------------------------------------------------------------------------- */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        
+        .grid { display: grid; }
+        
+        .hidden { display: none; }
+        .md-visible { display: none; } /* Mobile toggle logic */
+
+        .section-py { padding-top: 6rem; padding-bottom: 6rem; }
+
+        /* Animation Utilities */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s var(--ease-apple), transform 0.8s var(--ease-apple);
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* -------------------------------------------------------------------------- */
+        /* COMPONENTS                                  */
+        /* -------------------------------------------------------------------------- */
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            transition: transform 0.2s var(--ease-apple),
+                        background 0.2s var(--ease-apple),
+                        box-shadow 0.2s var(--ease-apple),
+                        border 0.2s var(--ease-apple);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background-color: var(--brand-primary);
+            color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .btn-primary:hover {
+            background-color: var(--brand-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+        .btn-secondary:hover {
+            border-color: var(--brand-primary);
+            background-color: var(--bg-surface-secondary);
+            color: var(--brand-primary);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+        .btn-ghost:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-surface-secondary);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--brand-primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* NAVBAR                                   */
+        /* -------------------------------------------------------------------------- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            height: 4.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-inner {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-hover));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-link {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background-color: var(--brand-primary);
+            transition: width 0.3s var(--ease-apple);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border: 1px solid var(--border-light);
+            background: var(--bg-surface);
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover {
+            color: var(--brand-primary);
+            border-color: var(--brand-primary);
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* HERO SECTION                                */
+        /* -------------------------------------------------------------------------- */
+        .hero {
+            padding-top: 9rem;
+            padding-bottom: 5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background grid effect */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background-image: 
+                radial-gradient(var(--border-light) 1px, transparent 1px);
+            background-size: 32px 32px;
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            opacity: 0.4;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.15), transparent 70%);
+            top: -200px;
+            right: -200px;
+            filter: blur(80px);
+            z-index: -2;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--text-primary) 20%, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-content p {
+            font-size: 1.125rem;
+            margin-bottom: 2.5rem;
+            max-width: 90%;
+            color: var(--text-secondary);
+        }
+
+        /* Live Dashboard Component in Hero */
+        .hero-visual {
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .app-window {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            transform: rotateY(-5deg) rotateX(2deg);
+            transition: transform 0.5s var(--ease-apple);
+        }
+        .hero-visual:hover .app-window {
+            transform: rotateY(0) rotateX(0);
+        }
+
+        .window-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-surface-secondary);
+        }
+        .window-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .bg-red { background: #EF4444; }
+        .bg-yellow { background: #F59E0B; }
+        .bg-green { background: #10B981; }
+
+        .window-body {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            height: 380px;
+        }
+
+        .window-sidebar {
+            padding: 1.5rem 1rem;
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .sidebar-item.active {
+            background-color: var(--bg-surface-secondary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .window-main {
+            padding: 1.5rem;
+            background: var(--bg-surface);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            padding: 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+        }
+        .stat-label { font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 0.25rem; }
+        .stat-value { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+        }
+        .status-pill {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--brand-accent);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* FEATURES GRID                               */
+        /* -------------------------------------------------------------------------- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--bg-surface);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s var(--ease-apple);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-hover);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background-color: var(--bg-surface-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-primary);
+            font-size: 1.5rem; margin-bottom: 1.25rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* INTERACTIVE WORKFLOW                           */
+        /* -------------------------------------------------------------------------- */
+        .workflow-container {
+            position: relative;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .workflow-steps {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-node {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.5rem;
+            width: 180px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        .step-node:hover {
+            transform: scale(1.05);
+            border-color: var(--brand-primary);
+        }
+        
+        .step-icon {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .step-node:hover .step-icon { color: var(--brand-primary); }
+
+        .connector-line {
+            height: 2px;
+            width: 60px;
+            background: var(--border-light);
+            position: relative;
+            overflow: hidden;
+        }
+        .connector-pulse {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
+            animation: lineFlow 2s infinite linear;
+        }
+
+        @keyframes lineFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* PRICING                                  */
+        /* -------------------------------------------------------------------------- */
+        .pricing-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .switch-toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: var(--border-light);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .switch-toggle.active {
+            background: var(--brand-primary);
+        }
+        .switch-circle {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s var(--ease-apple);
+        }
+        .switch-toggle.active .switch-circle {
+            transform: translateX(22px);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s var(--ease-apple);
+        }
+        .pricing-card.popular {
+            border-color: var(--brand-primary);
+            box-shadow: var(--shadow-lg);
+            transform: scale(1.02);
+            position: relative;
+        }
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--brand-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .price-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.5rem;
+            transition: transform 0.3s var(--ease-apple), opacity 0.3s var(--ease-apple);
+        }
+        .price-sub { font-size: 0.875rem; color: var(--text-tertiary); margin-bottom: 2rem; }
+        
+        .feature-list {
+            list-style: none;
+            flex-grow: 1;
+        }
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+        .check-icon { color: var(--brand-accent); }
+
+        /* -------------------------------------------------------------------------- */
+        /* FOOTER                                   */
+        /* -------------------------------------------------------------------------- */
+        footer {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-light);
+            padding: 4rem 0 2rem;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        .footer-col h4 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            margin-bottom: 1.25rem;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li { margin-bottom: 0.75rem; }
+        .footer-links a {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--brand-primary); }
+
+        /* -------------------------------------------------------------------------- */
+        /* MEDIA QUERIES                               */
+        /* -------------------------------------------------------------------------- */
+        @media (max-width: 1024px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-content p { margin: 0 auto 2rem; }
+            .hero-actions { justify-content: center; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-card.popular { transform: none; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-actions { display: none; }
+            .mobile-toggle { display: block; }
+            
+            /* Mobile Menu State */
+            .navbar.mobile-active .nav-links {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 4.5rem;
+                left: 0;
+                right: 0;
+                background: var(--bg-surface);
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--border-light);
+                gap: 1rem;
+            }
+
+            .features-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .workflow-steps { flex-direction: column; gap: 1rem; }
+            .connector-line { width: 2px; height: 30px; }
+            .connector-pulse { width: 100%; height: 50%; top: 0; animation: lineFlowVertical 2s infinite linear; }
+            
+            @keyframes lineFlowVertical {
+                0% { transform: translateY(-100%); }
+                100% { transform: translateY(200%); }
+            }
+            
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .hero-visual { display: none; } /* Hide complex 3D on small mobile for performance/space */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="ph-bold ph-robot"></i></div>
+                AI Agent Hub
+            </a>
+            
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#workflow" class="nav-link">How it Works</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#" class="nav-link">Resources</a>
+            </div>
+
+            <div class="nav-actions">
+                <div class="theme-toggle" id="themeBtn" aria-label="Toggle Theme">
+                    <i class="ph-fill ph-moon"></i>
+                </div>
+                <a href="#" class="btn btn-ghost">Log In</a>
+                <a href="#" class="btn btn-primary">Start Free</a>
+            </div>
+            
+            <div class="mobile-toggle" id="mobileMenuBtn">
+                <i class="ph ph-list"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="container hero-grid">
+            <div class="hero-content fade-up">
+                <div class="badge">
+                    <div class="badge-dot"></div>
+                    v2.0 is now live for Enterprise
+                </div>
+                <h1>Build, Manage & Scale <br> Autonomous AI Agents.</h1>
+                <p>The first enterprise-grade platform designed to orchestrate complex AI workflows with security, reliability, and scale.</p>
+                <div class="flex gap-4 hero-actions">
+                    <a href="#" class="btn btn-primary">Create Agent</a>
+                    <a href="#" class="btn btn-secondary">
+                        <i class="ph ph-play-circle" style="margin-right: 8px;"></i> View Demo
+                    </a>
+                </div>
+            </div>
+
+            <!-- "Live" Dashboard Preview -->
+            <div class="hero-visual fade-up">
+                <div class="app-window">
+                    <div class="window-header">
+                        <div class="window-dot bg-red"></div>
+                        <div class="window-dot bg-yellow"></div>
+                        <div class="window-dot bg-green"></div>
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-left: auto;">dash.aiagenthub.com</div>
+                    </div>
+                    <div class="window-body">
+                        <div class="window-sidebar">
+                            <div class="sidebar-item active"><i class="ph ph-squares-four"></i> Overview</div>
+                            <div class="sidebar-item"><i class="ph ph-robot"></i> Agents</div>
+                            <div class="sidebar-item"><i class="ph ph-git-merge"></i> Workflows</div>
+                            <div class="sidebar-item"><i class="ph ph-chart-line-up"></i> Analytics</div>
+                        </div>
+                        <div class="window-main">
+                            <div class="stat-grid">
+                                <div class="stat-card">
+                                    <div class="stat-label">Active Agents</div>
+                                    <div class="stat-value">12</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">Tasks/Hr</div>
+                                    <div class="stat-value">1,402</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">Success Rate</div>
+                                    <div class="stat-value text-green">99.9%</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.75rem;">Recent Activity</div>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-fill ph-check-circle text-green" style="color: var(--brand-accent);"></i>
+                                        <span>Customer Support Bot</span>
+                                    </div>
+                                    <span class="status-pill">Active</span>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-fill ph-check-circle text-green" style="color: var(--brand-accent);"></i>
+                                        <span>Data Scraper Alpha</span>
+                                    </div>
+                                    <span class="status-pill">Processing</span>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-fill ph-pause-circle" style="color: var(--text-tertiary);"></i>
+                                        <span>Email Triager</span>
+                                    </div>
+                                    <span style="font-size: 0.7rem; color: var(--text-tertiary);">Paused</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLIENTS / TRUST -->
+    <section class="container" style="text-align: center; margin-bottom: 4rem;">
+        <p style="font-size: 0.875rem; font-weight: 500; color: var(--text-tertiary); margin-bottom: 1.5rem;">TRUSTED BY INNOVATIVE TEAMS</p>
+        <div class="flex justify-center gap-8" style="opacity: 0.5; filter: grayscale(100%); flex-wrap: wrap;">
+            <!-- Simple SVG placeholders for logos -->
+            <svg height="30" width="100"><text x="0" y="20" font-weight="bold" fill="currentColor">ACME Corp</text></svg>
+            <svg height="30" width="100"><text x="0" y="20" font-weight="bold" fill="currentColor">GlobalBank</text></svg>
+            <svg height="30" width="100"><text x="0" y="20" font-weight="bold" fill="currentColor">Technic</text></svg>
+            <svg height="30" width="100"><text x="0" y="20" font-weight="bold" fill="currentColor">Nebula.ai</text></svg>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section-py" style="background: var(--bg-surface-secondary);">
+        <div class="container">
+            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <h2 style="font-size: 2.25rem; margin-bottom: 1rem;">Powerful enough for engineers,<br>simple enough for everyone.</h2>
+                <p>Everything you need to deploy intelligent agents into production.</p>
+            </div>
+
+            <div class="features-grid fade-up">
+                <!-- 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="ph ph-magic-wand"></i></div>
+                    <h3>Visual Agent Builder</h3>
+                    <p>Drag-and-drop logic builder. Define goals, constraints, and personality without writing a single line of Python.</p>
+                </div>
+                <!-- 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="ph ph-database"></i></div>
+                    <h3>Knowledge Integration</h3>
+                    <p>Connect your agents to Notion, Google Drive, or SQL databases. RAG pipelines are built-in and optimized.</p>
+                </div>
+                <!-- 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="ph ph-lightning"></i></div>
+                    <h3>Real-time Triggers</h3>
+                    <p>Agents wake up on webhooks, emails, or schedule. Event-driven architecture ensures instant response.</p>
+                </div>
+                <!-- 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="ph ph-plugs-connected"></i></div>
+                    <h3>API Connectivity</h3>
+                    <p>Native integration with 500+ tools via REST. Authenticate once, and let your agents take action safely.</p>
+                </div>
+                <!-- 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="ph ph-chart-bar"></i></div>
+                    <h3>Granular Analytics</h3>
+                    <p>Track token usage, cost per execution, and success rates. Identify bottlenecks in agent reasoning chains.</p>
+                </div>
+                <!-- 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="ph ph-shield-check"></i></div>
+                    <h3>Enterprise Security</h3>
+                    <p>SOC2 compliant infrastructure. Role-based access control, audit logs, and private cloud deployment options.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS / WORKFLOW -->
+    <section id="workflow" class="section-py">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: 2.25rem; margin-bottom: 1rem;">Orchestrate the Impossible</h2>
+                <p>Chain agents together to solve complex, multi-step problems.</p>
+            </div>
+
+            <div class="workflow-container fade-up">
+                <div class="workflow-steps">
+                    <div class="step-node">
+                        <div class="step-icon"><i class="ph ph-envelope-simple"></i></div>
+                        <strong>Trigger</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-tertiary);">New Customer Email</div>
+                    </div>
+
+                    <div class="connector-line"><div class="connector-pulse"></div></div>
+
+                    <div class="step-node" style="border-color: var(--brand-primary);">
+                        <div class="step-icon" style="color: var(--brand-primary);"><i class="ph ph-brain"></i></div>
+                        <strong>Analysis Agent</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-tertiary);">Classify Sentiment</div>
+                    </div>
+
+                    <div class="connector-line"><div class="connector-pulse"></div></div>
+
+                    <div class="step-node">
+                        <div class="step-icon"><i class="ph ph-arrows-split"></i></div>
+                        <strong>Router</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-tertiary);">If Urgent → Escalation</div>
+                    </div>
+
+                    <div class="connector-line"><div class="connector-pulse"></div></div>
+
+                    <div class="step-node">
+                        <div class="step-icon"><i class="ph ph-slack-logo"></i></div>
+                        <strong>Action</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-tertiary);">Notify Support Team</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="section-py" style="background: var(--bg-surface-secondary);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 2.25rem; margin-bottom: 1rem;">Simple, transparent pricing</h2>
+                <p>Start small and scale as your agent fleet grows.</p>
+            </div>
+
+            <div class="pricing-toggle-container">
+                <span style="font-size: 0.9rem; font-weight: 500;">Monthly</span>
+                <div class="switch-toggle" id="priceToggle">
+                    <div class="switch-circle"></div>
+                </div>
+                <span style="font-size: 0.9rem; font-weight: 500;">Yearly <span style="color: var(--brand-accent); font-size: 0.75rem;">(Save 20%)</span></span>
+            </div>
+
+            <div class="pricing-grid fade-up">
+                <!-- Starter -->
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price-text" data-monthly="$29" data-yearly="$24">$29</div>
+                    <div class="price-sub">per month</div>
+                    <ul class="feature-list">
+                        <li><i class="ph-bold ph-check check-icon"></i> 5 Active Agents</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> 10k Runs / mo</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> Standard Support</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> 7-day Log Retention</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary" style="width: 100%;">Get Started</a>
+                </div>
+
+                <!-- Growth -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <h3>Growth</h3>
+                    <div class="price-text" data-monthly="$99" data-yearly="$79">$99</div>
+                    <div class="price-sub">per month</div>
+                    <ul class="feature-list">
+                        <li><i class="ph-bold ph-check check-icon"></i> 20 Active Agents</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> 100k Runs / mo</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> Priority Support</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> Advanced Integrations</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
+                </div>
+
+                <!-- Business -->
+                <div class="pricing-card">
+                    <h3>Business</h3>
+                    <div class="price-text" data-monthly="$299" data-yearly="$249">$299</div>
+                    <div class="price-sub">per month</div>
+                    <ul class="feature-list">
+                        <li><i class="ph-bold ph-check check-icon"></i> Unlimited Agents</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> 1M Runs / mo</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> Dedicated Manager</li>
+                        <li><i class="ph-bold ph-check check-icon"></i> SSO & Audit Logs</li>
+                    </ul>
+                    <a href="#" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+                        <div class="logo-icon"><i class="ph-bold ph-robot"></i></div>
+                        AI Agent Hub
+                    </a>
+                    <p style="font-size: 0.9375rem; max-width: 300px;">
+                        The operating system for the autonomous workforce. Build better, faster, and smarter.
+                    </p>
+                    <div class="flex gap-4" style="margin-top: 1.5rem; font-size: 1.25rem; color: var(--text-secondary);">
+                        <a href="#"><i class="ph-fill ph-twitter-logo"></i></a>
+                        <a href="#"><i class="ph-fill ph-github-logo"></i></a>
+                        <a href="#"><i class="ph-fill ph-linkedin-logo"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Changelog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-light); padding-top: 2rem; text-align: center; color: var(--text-tertiary); font-size: 0.875rem;">
+                © 2024 AI Agent Hub Inc. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+
+            // 1. Scroll Reveal Logic (Intersection Observer)
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Only animate once
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-up').forEach(el => {
+                observer.observe(el);
+            });
+
+            // 2. Dark/Light Theme Toggle
+            const themeBtn = document.getElementById('themeBtn');
+            const icon = themeBtn.querySelector('i');
+            const html = document.documentElement;
+
+            const savedTheme = localStorage.getItem('theme');
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+                html.setAttribute('data-theme', 'dark');
+                icon.classList.replace('ph-moon', 'ph-sun');
+            }
+
+            themeBtn.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                if (currentTheme === 'light') {
+                    html.setAttribute('data-theme', 'dark');
+                    icon.classList.replace('ph-moon', 'ph-sun');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    html.setAttribute('data-theme', 'light');
+                    icon.classList.replace('ph-sun', 'ph-moon');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // 3. Pricing Toggle Logic
+            const priceToggle = document.getElementById('priceToggle');
+            const priceTexts = document.querySelectorAll('.price-text');
+            let isYearly = false;
+
+            priceToggle.addEventListener('click', () => {
+                isYearly = !isYearly;
+                priceToggle.classList.toggle('active');
+                
+                priceTexts.forEach(el => {
+                    el.style.transform = 'scale(0.95)';
+                    el.style.opacity = '0';
+
+                    setTimeout(() => {
+                        el.textContent = isYearly ? el.dataset.yearly : el.dataset.monthly;
+                        el.style.transform = 'scale(1)';
+                        el.style.opacity = '1';
+                    }, 200);
+                });
+            });
+
+            // 4. Mobile Menu
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            
+            mobileBtn.addEventListener('click', () => {
+                navbar.classList.toggle('mobile-active');
+                const menuIcon = mobileBtn.querySelector('i');
+
+                if (navbar.classList.contains('mobile-active')) {
+                    menuIcon.classList.replace('ph-list', 'ph-x');
+                } else {
+                    menuIcon.classList.replace('ph-x', 'ph-list');
+                }
+            });
+
+            // Close menu when clicking a link (mobile UX polish)
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navbar.classList.remove('mobile-active');
+                    mobileBtn.querySelector('i').classList.replace('ph-x', 'ph-list');
+                });
+            });
+
+            // 5. Navbar Scroll Elevation
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    navbar.style.boxShadow = 'var(--shadow-md)';
+                } else {
+                    navbar.style.boxShadow = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
